@@ -1,37 +1,88 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Petualangan di Desa Persahabatan</title>
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Petualangan di Desa Persahabatan</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#203b32;color:#20352e;font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;padding:8px}#app{width:min(100%,960px);background:#fff8e8;border:4px solid #132820;border-radius:15px;overflow:hidden}header{background:#f4d58a;padding:10px;display:flex;justify-content:space-between;gap:8px;font-weight:800}small{display:block;font-size:11px}#stage{position:relative}canvas{width:100%;display:block;aspect-ratio:16/9;image-rendering:pixelated;touch-action:none}.pill{background:#fff8e8;border:2px solid #20352e;border-radius:20px;padding:4px 8px;font-size:12px;font-weight:800;white-space:nowrap}#hud{position:absolute;top:7px;left:7px;right:7px;display:flex;justify-content:space-between;gap:5px;pointer-events:none}#hint{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);background:#fff8e8;border:2px solid #20352e;border-radius:20px;padding:5px 9px;font-size:11px;font-weight:800;white-space:nowrap}.overlay{position:absolute;inset:0;background:#172a24b8;display:flex;align-items:center;justify-content:center;padding:10px}.panel{background:#fff8e8;border:4px solid #20352e;border-radius:15px;padding:16px;width:min(95%,510px);max-height:95%;overflow:auto;text-align:center;box-shadow:0 5px #132820}h1{font-size:clamp(20px,4vw,30px);line-height:1.15;margin:0 0 10px}h2{margin:0 0 8px;font-size:22px}p{font-size:14px;line-height:1.4}button{background:#ffd66b;border:3px solid #20352e;border-radius:10px;padding:9px 12px;font:700 14px system-ui;color:#20352e;box-shadow:0 3px #20352e;cursor:pointer;touch-action:manipulation}button:active{transform:translateY(2px);box-shadow:0 1px #20352e}.secondary{background:#e5f1d8}.danger{background:#f4a8a8}.buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:10px}.answers{display:grid;gap:8px;margin-top:10px}.answers button{text-align:left;background:#e5f1d8}#touch{display:none;justify-content:space-between;align-items:end;padding:8px;background:#d8edc9;border-top:3px solid #20352e}.dpad{display:grid;grid-template-columns:38px 38px 38px;grid-template-rows:35px 35px;gap:3px}.dpad button{padding:0}.up{grid-column:2}.left{grid-column:1;grid-row:2}.down{grid-column:2;grid-row:2}.right{grid-column:3;grid-row:2}.touch-actions{display:flex;gap:6px}.touch-actions button{font-size:11px;padding:8px 5px}footer{text-align:center;font-size:10px;padding:6px;color:#53675c}@media(pointer:coarse){#touch{display:flex}}@media(max-width:480px){body{padding:3px}#app{border-width:3px}header{font-size:13px;padding:7px}.pill{font-size:10px}#hint{font-size:9px}}
-</style></head><body><div id="app"><header><div>🌼 Petualangan di Desa Persahabatan<small>Bahasa Indonesia • Kelas II SD</small></div><span class="pill">⭐ <span id="score">0</span></span></header><div id="stage"><canvas id="c" width="640" height="360"></canvas><div id="hud"><span class="pill" id="mission">Misi 1/5</span><span class="pill" id="progress">0/5 selesai</span></div><div id="hint">Jelajahi desa dan temui Sari!</div><div class="overlay" id="ov"><div class="panel" id="panel"><h1>🌳 Petualangan di Desa Persahabatan</h1><p>Temui Sari dan pelajari lima kata ajaib untuk menjaga persahabatan.</p><div class="buttons"><button onclick="start()">▶ Mulai</button><button class="secondary" onclick="guide()">📖 Cara bermain</button><button class="secondary" onclick="settings()">⚙ Kecepatan</button></div></div></div></div><div id="touch"><div class="dpad"><button class="up" data-d="up">▲</button><button class="left" data-d="left">◀</button><button class="down" data-d="down">▼</button><button class="right" data-d="right">▶</button></div><div class="touch-actions"><button class="secondary" onclick="interact()">💬<br>Interaksi</button><button class="secondary" onclick="pause()">Ⅱ<Br>Menu</button></div></div><footer>Panah/WASD untuk bergerak • E/Enter untuk berinteraksi</footer></div>
+*{box-sizing:border-box}body{margin:0;background:#162638;color:#fff;font-family:system-ui,Arial,sans-serif}
+#app{max-width:960px;margin:auto;min-height:100dvh;padding:12px;display:flex;flex-direction:column;gap:10px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+h1{font-size:clamp(19px,4vw,28px);margin:0;color:#ffdf87}button{border:0;border-radius:12px;padding:11px 14px;font-weight:700;background:#ffdf87;color:#233044;cursor:pointer}
+button:disabled{opacity:.5} .secondary{background:#dce9f3}.small{padding:8px 10px}
+#scene{position:relative;border:4px solid #f6e7bd;border-radius:16px;overflow:hidden;background:#9cd9a3}
+canvas{display:block;width:100%;height:auto;image-rendering:pixelated;touch-action:none}
+#hud{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#dce9f3;font-size:14px}
+.panel{background:#24384d;border:1px solid #49627a;border-radius:16px;padding:14px}
+.hidden{display:none!important}
+#missionList{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px}
+.mission{background:#f3f6ef;color:#243044;text-align:left;min-height:92px}
+.mission.done{background:#a7e6b2}.mission strong{display:block;font-size:16px}.mission span{display:block;font-size:12px;font-weight:500;margin-top:5px}
+#question{font-size:18px;line-height:1.45;margin:0 0 12px}
+#answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#answers button{min-height:48px}
+#feedback{margin-top:10px;min-height:24px;font-weight:700}
+#controls{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+#dpad{display:grid;grid-template-columns:46px 46px 46px;grid-template-rows:40px 40px;gap:4px}
+#dpad button{padding:4px;font-size:20px}
+#dpad .up{grid-column:2}.left{grid-column:1;grid-row:2}.down{grid-column:2;grid-row:2}.right{grid-column:3;grid-row:2}
+.note{font-size:13px;color:#dce9f3;line-height:1.45}
+@media(max-width:500px){#app{padding:8px}#answers{grid-template-columns:1fr}.panel{padding:11px}}
+</style>
+</head>
+<body>
+<div id="app">
+<header><h1>🌳 Petualangan di Desa Persahabatan</h1><button class="small secondary" id="homeBtn">Menu Misi</button></header>
+<div id="hud"><span id="progress">Misi selesai: 0/5</span><span id="score">Bintang: 0 ⭐</span></div>
+<div id="scene"><canvas id="game" width="800" height="420" aria-label="Peta desa"></canvas></div>
+<section id="menu" class="panel">
+<h2 style="margin:0 0 8px">Pilih Misi</h2><p class="note">Selesaikan lima misi untuk membantu warga desa. Setiap misi mengajarkan satu kata ajaib.</p>
+<div id="missionList"></div>
+</section>
+<section id="task" class="panel hidden">
+<div class="note" id="taskLabel"></div><h2 id="taskTitle" style="margin:5px 0 10px"></h2><p id="question"></p>
+<div id="answers"></div><div id="feedback" role="status"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="secondary" id="backBtn">Kembali ke Misi</button><button id="nextBtn" class="hidden">Lanjutkan →</button></div>
+</section>
+<section id="controls" class="panel hidden">
+<div><strong>Bergerak di desa</strong><div class="note">Gunakan tombol panah atau WASD. Dekati warga lalu tekan “Temui warga”.</div></div>
+<div id="dpad"><button class="up" data-move="up">↑</button><button class="left" data-move="left">←</button><button class="down" data-move="down">↓</button><button class="right" data-move="right">→</button></div>
+<button id="meetBtn">Temui warga</button>
+</section>
+<p class="note">Media pembelajaran Bahasa Indonesia kelas 2 SD · Bab 5: Berteman dalam Keragaman</p>
+</div>
 <script>
-const c=document.getElementById('c'),x=c.getContext('2d'),ov=document.getElementById('ov'),panel=document.getElementById('panel'),hint=document.getElementById('hint');
-let mode='menu',score=0,idx=0,speed=2.3,keys={},last=0;
-const qs=[
-{q:'Kamu ingin meminta bantuan teman membawa buku. Apa yang kamu katakan?',a:['“Tolong, bantu aku ya.”','“Cepat bantu aku!”','“Pergi sana!”'],ok:0,word:'tolong',exp:'“Tolong” digunakan saat meminta bantuan dengan sopan.'},
-{q:'Kamu tidak sengaja menyenggol teman hingga bukunya jatuh. Apa yang kamu ucapkan?',a:['“Bukan urusanku.”','“Maaf, aku tidak sengaja.”','“Kamu yang salah.”'],ok:1,word:'maaf',exp:'“Maaf” diucapkan ketika kita melakukan kesalahan.'},
-{q:'Teman membantumu mengambil buku yang jatuh. Apa yang kamu ucapkan?',a:['“Ambilkan lagi!”','“Ya sudah.”','“Terima kasih sudah membantu.”'],ok:2,word:'terima kasih',exp:'“Terima kasih” menunjukkan penghargaan atas kebaikan orang lain.'},
-{q:'Kamu ingin melewati teman yang berdiri di jalan. Apa yang kamu katakan?',a:['“Minggir!”','“Permisi, boleh aku lewat?”','“Awas!”'],ok:1,word:'permisi',exp:'“Permisi” digunakan saat meminta izin atau melewati orang dengan sopan.'},
-{q:'Kamu menawarkan kursi kosong kepada teman. Apa yang kamu katakan?',a:['“Silakan duduk di sini.”','“Jangan duduk!”','“Terserah.”'],ok:0,word:'silakan',exp:'“Silakan” digunakan untuk mempersilakan orang lain.'}
+const missions=[
+{word:"TOLONG",title:"Membantu Sari",npc:"Sari",x:180,y:210,q:"Sari kesulitan membawa buku. Apa yang sebaiknya ia katakan saat meminta bantuan?",a:["Tolong bantu aku membawa buku.","Pergi dari sini!","Aku tidak peduli."],correct:0,explain:"Benar! Kata “tolong” digunakan saat meminta bantuan."},
+{word:"MAAF",title:"Tidak Sengaja",npc:"Bima",x:400,y:145,q:"Bima tidak sengaja menyenggol temannya. Apa yang sebaiknya ia katakan?",a:["Terima kasih.","Maaf, aku tidak sengaja.","Silakan duduk."],correct:1,explain:"Benar! Kita mengucapkan “maaf” ketika melakukan kesalahan."},
+{word:"TERIMA KASIH",title:"Hadiah untuk Lani",npc:"Lani",x:625,y:220,q:"Lani menerima pensil dari temannya. Apa yang sebaiknya ia ucapkan?",a:["Permisi.","Tolong pergi.","Terima kasih."],correct:2,explain:"Benar! “Terima kasih” diucapkan saat menerima bantuan atau pemberian."},
+{word:"PERMISI",title:"Melewati Warga",npc:"Pak Danu",x:300,y:330,q:"Kamu ingin lewat di depan orang yang sedang berbicara. Apa yang sebaiknya kamu katakan?",a:["Permisi, saya lewat.","Diam semuanya!","Silakan ambil."],correct:0,explain:"Benar! “Permisi” digunakan saat meminta izin atau melewati orang."},
+{word:"SILAKAN",title:"Berbagi Tempat",npc:"Mira",x:535,y:330,q:"Mira mempersilakan temannya duduk di kursi kosong. Apa yang tepat ia ucapkan?",a:["Maafkan aku.","Silakan duduk di sini.","Tolong aku."],correct:1,explain:"Benar! “Silakan” digunakan untuk mempersilakan orang lain."}
 ];
-const p={x:105,y:185},s={x:440,y:190};
-function r(a,b,w,h,col){x.fillStyle=col;x.fillRect(Math.round(a),Math.round(b),w,h)}
-function t(str,a,b,size=10,col='#20352e',align='left'){x.fillStyle=col;x.font='bold '+size+'px system-ui';x.textAlign=align;x.fillText(str,a,b)}
-function tree(a,b){r(a+7,b+15,8,14,'#80563a');r(a,b+2,22,20,'#28774d');r(a+3,b-4,16,17,'#39965c')}
-function house(a,b,w,roof){r(a,b+18,66,42,w);r(a-5,b+10,76,13,roof);r(a+10,b+28,14,14,'#bde7ee');r(a+43,b+28,12,32,'#8b5c3c')}
-function person(o,shirt){r(o.x+5,o.y+1,9,8,'#eab78b');r(o.x+4,o.y,11,4,'#533d35');r(o.x+3,o.y+9,13,9,shirt);r(o.x+4,o.y+18,4,6,'#4b5d85');r(o.x+11,o.y+18,4,6,'#4b5d85');r(o.x+7,o.y+4,2,2,'#20352e');r(o.x+12,o.y+4,2,2,'#20352e')}
-function draw(){r(0,0,640,360,'#a8dfa0');for(let yy=0;yy<360;yy+=24)for(let xx=0;xx<640;xx+=38)r(xx+(yy%48?12:0),yy,3,2,'#8bce89');r(0,153,640,66,'#e9cf91');r(285,0,68,360,'#e9cf91');for(let xx=8;xx<640;xx+=28)r(xx,166,13,2,'#d7b978');house(20,15,'#f6dfad','#d76d58');house(448,18,'#dce9f5','#8a7bd1');house(450,270,'#f4c7aa','#c45d59');[[70,115],[185,120],[555,105],[555,230],[250,275]].forEach(a=>tree(...a));[[62,65],[125,285],[200,72],[300,286],[520,70],[565,270],[345,110],[80,225],[580,140]].forEach((a,i)=>{r(a[0],a[1],3,3,i%2?'#f4a8a8':'#fff0a5');r(a[0]+3,a[1]+3,3,3,'#fff8e8');r(a[0]+1,a[1]+6,2,4,'#398b4d')});r(s.x-5,s.y+15,25,5,'#5a83d0');r(s.x-2,s.y+10,23,5,'#e5a34f');r(s.x+1,s.y+5,20,5,'#d76d58');person(s,'#e78aab');person(p,'#4b9bd5');t('RUMAH BUDI',53,88,9);t('PERPUSTAKAAN',482,88,9);t('SARI',s.x+9,s.y-7,10,'#20352e','center');if(idx<5){x.strokeStyle='#ffd66b';x.lineWidth=2;x.beginPath();x.arc(s.x+9,s.y+10,22,0,Math.PI*2);x.stroke()}}
-function show(title,body,buttons=[]){ov.style.display='flex';panel.innerHTML='<h2>'+title+'</h2>'+body+'<div class="buttons" id="btns"></div>';let box=panel.querySelector('#btns');buttons.forEach(b=>{let el=document.createElement('button');el.textContent=b.label;if(b.secondary)el.classList.add('secondary');if(b.danger)el.classList.add('danger');el.onclick=b.fn;box.appendChild(el)})}
-function hide(){ov.style.display='none'}
-function start(){mode='play';hide();hint.textContent='Dekati Sari lalu tekan E / Interaksi.'}
-function guide(){show('📖 Cara Bermain','<p>Gerakkan karakter dengan panah/WASD atau tombol HP. Dekati Sari, lalu tekan E, Enter, atau Interaksi. Jawab lima soal kata ajaib.</p>',[{label:'Kembali',fn:()=>mode==='menu'?menu():pause()}])}
-function settings(){show('⚙ Kecepatan gerak','<p>Pilih kecepatan karakter.</p>',[{label:'Pelan',secondary:true,fn:()=>{speed=1.6;settings()}},{label:'Normal',secondary:true,fn:()=>{speed=2.3;settings()}},{label:'Cepat',secondary:true,fn:()=>{speed=3.1;settings()}},{label:'Kembali',fn:()=>mode==='menu'?menu():pause()}])}
-function menu(){mode='menu';show('🌳 Petualangan di Desa Persahabatan','<p>Temui Sari dan pelajari lima kata ajaib untuk menjaga persahabatan.</p>',[{label:'▶ Mulai',fn:start},{label:'📖 Cara bermain',secondary:true,fn:guide},{label:'⚙ Kecepatan',secondary:true,fn:settings}])}
-function pause(){if(mode==='play'){mode='pause';show('⏸ Permainan Dijeda','<p>Istirahat sebentar, petualang!</p>',[{label:'Lanjutkan',fn:start},{label:'Cara bermain',secondary:true,fn:guide},{label:'Menu utama',danger:true,fn:menu}])}else if(mode==='pause')start()}
-function interact(){if(mode!=='play')return;if(Math.hypot(p.x-s.x,p.y-s.y)>54){hint.textContent='Dekati Sari dulu untuk berbicara.';return}if(idx>=5){show('🌟 Semua Misi Selesai!',`<p>Kamu menyelesaikan lima misi dan mendapat <b>${score} poin</b>!</p><p>Kata-kata sopan membantu menjaga persahabatan.</p>`,[{label:'Main lagi',fn:()=>{score=0;idx=0;document.getElementById('score').textContent=0;update();p.x=105;p.y=185;start()}},{label:'Menu utama',secondary:true,fn:menu}]);mode='dialog';return}let q=qs[idx];mode='dialog';show('💬 Misi '+(idx+1)+' dari 5','<p><b>'+q.q+'</b></p><div class="answers" id="answers"></div>');let a=panel.querySelector('#answers');q.a.forEach((v,i)=>{let b=document.createElement('button');b.textContent=v;b.onclick=()=>answer(i);a.appendChild(b)})}
-function answer(n){let q=qs[idx];if(n===q.ok){score+=10;idx++;update();show('🎉 Jawaban tepat!','<p>'+q.exp+'</p><p><b>+10 poin persahabatan</b></p><p>'+(idx===5?'Semua misi telah selesai!':'Lanjutkan belajar kata ajaib berikutnya.')+'</p>',[{label:idx===5?'Lihat hasil':'Lanjutkan',fn:()=>{mode='play';hide();hint.textContent=idx===5?'Semua misi selesai! Bicara lagi dengan Sari untuk melihat hasil.':'Dekati Sari lagi untuk misi berikutnya.'}}])}else show('💡 Coba lagi!','<p>Pilih kata yang paling sopan dan sesuai dengan situasi.</p>',[{label:'Coba lagi',fn:()=>{mode='play';interact()}}])}
-function update(){document.getElementById('score').textContent=score;document.getElementById('progress').textContent=idx+'/5 selesai';document.getElementById('mission').textContent=idx>=5?'Semua misi selesai':'Misi '+(idx+1)+'/5'}
-function move(dt){let vx=0,vy=0;if(keys.left||keys.ArrowLeft||keys.a||keys.A)vx--;if(keys.right||keys.ArrowRight||keys.d||keys.D)vx++;if(keys.up||keys.ArrowUp||keys.w||keys.W)vy--;if(keys.down||keys.ArrowDown||keys.s||keys.S)vy++;if(vx&&vy){vx*=.707;vy*=.707}p.x=Math.max(5,Math.min(617,p.x+vx*speed*dt*60));p.y=Math.max(95,Math.min(330,p.y+vy*speed*dt*60))}
-function loop(tm){let dt=Math.min((tm-last)/1000||0,.04);last=tm;if(mode==='play')move(dt);draw();requestAnimationFrame(loop)}
-window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys[e.key]=true;if((e.key==='e'||e.key==='E'||e.key==='Enter')&&mode==='play')interact();if(e.key==='Escape')pause()});window.addEventListener('keyup',e=>keys[e.key]=false);
-document.querySelectorAll('[data-d]').forEach(b=>{let d=b.dataset.d,on=e=>{e.preventDefault();keys[d]=true},off=e=>{e.preventDefault();keys[d]=false};b.addEventListener('pointerdown',on);['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,off))});
-update();requestAnimationFrame(loop);
-</script></body></html>
+const c=document.getElementById('game'),ctx=c.getContext('2d');
+const menu=document.getElementById('menu'),task=document.getElementById('task'),controls=document.getElementById('controls');
+const list=document.getElementById('missionList');let completed=new Set(),score=0,current=null,player={x:400,y:270},nearby=null,mode='menu';
+function draw(){
+ctx.clearRect(0,0,800,420);ctx.fillStyle='#9bd99b';ctx.fillRect(0,0,800,420);
+ctx.fillStyle='#e6d3a1';ctx.fillRect(0,185,800,52);ctx.fillRect(370,0,55,420);ctx.fillRect(0,315,800,35);
+ctx.fillStyle='#c5a477';[[70,45],[285,40],[525,50],[675,75]].forEach(([x,y])=>{ctx.fillRect(x,y,75,65);ctx.fillStyle='#b65d50';ctx.beginPath();ctx.moveTo(x-8,y);ctx.lineTo(x+37,y-28);ctx.lineTo(x+83,y);ctx.fill();ctx.fillStyle='#c5a477';ctx.fillRect(x,y,75,65);ctx.fillStyle='#e9f1d1';ctx.fillRect(x+12,y+15,16,18);ctx.fillRect(x+47,y+15,16,18);ctx.fillStyle='#77563b';ctx.fillRect(x+30,y+38,16,27);ctx.fillStyle='#c5a477';});
+missions.forEach((m,i)=>{ctx.fillStyle=completed.has(i)?'#3c8b58':'#315b8c';ctx.beginPath();ctx.arc(m.x,m.y,22,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillText(completed.has(i)?'✓':m.npc,m.x,m.y+4);});
+ctx.fillStyle='#31445b';ctx.fillRect(player.x-10,player.y-12,20,24);ctx.fillStyle='#ffd6ae';ctx.fillRect(player.x-8,player.y-23,16,14);ctx.fillStyle='#fff';ctx.fillRect(player.x-4,player.y-18,3,3);ctx.fillRect(player.x+3,player.y-18,3,3);
+if(mode==='map'){ctx.fillStyle='#203247';ctx.font='bold 15px system-ui';ctx.textAlign='left';ctx.fillText('Temui warga desa untuk memulai misi',15,25);}
+}
+function renderMissions(){list.innerHTML='';missions.forEach((m,i)=>{const b=document.createElement('button');b.className='mission'+(completed.has(i)?' done':'');b.innerHTML=`<strong>${completed.has(i)?'✓ ':''}Misi ${i+1}: ${m.word}</strong><span>${m.title}</span><span>${completed.has(i)?'Selesai':'Ketuk untuk memulai'}</span>`;b.onclick=()=>startMission(i);list.appendChild(b)});document.getElementById('progress').textContent=`Misi selesai: ${completed.size}/5`;document.getElementById('score').textContent=`Bintang: ${score} ⭐`;}
+function showMenu(){mode='menu';menu.classList.remove('hidden');task.classList.add('hidden');controls.classList.add('hidden');renderMissions();draw()}
+function startMission(i){current=i;const m=missions[i];mode='task';menu.classList.add('hidden');controls.classList.add('hidden');task.classList.remove('hidden');document.getElementById('taskLabel').textContent=`MISI ${i+1} DARI 5 · KATA AJAIB: ${m.word}`;document.getElementById('taskTitle').textContent=m.title;document.getElementById('question').textContent=m.q;document.getElementById('feedback').textContent='';document.getElementById('nextBtn').classList.add('hidden');const a=document.getElementById('answers');a.innerHTML='';m.a.forEach((v,j)=>{const b=document.createElement('button');b.className='secondary';b.textContent=v;b.onclick=()=>answer(j);a.appendChild(b)});}
+function answer(j){const m=missions[current],fb=document.getElementById('feedback');const buttons=[...document.querySelectorAll('#answers button')];buttons.forEach(b=>b.disabled=true);if(j===m.correct){fb.textContent='⭐ Hebat! '+m.explain;fb.style.color='#9ee7ac';if(!completed.has(current)){completed.add(current);score+=1;}document.getElementById('nextBtn').classList.remove('hidden');renderMissions()}else{fb.textContent='Belum tepat. Coba pikirkan kata yang paling sopan, lalu tekan “Coba lagi”.';fb.style.color='#ffd38a';const retry=document.createElement('button');retry.textContent='Coba lagi';retry.onclick=()=>{buttons.forEach(b=>b.disabled=false);retry.remove();fb.textContent='';};document.getElementById('answers').appendChild(retry)}}
+document.getElementById('nextBtn').onclick=()=>{if(completed.size===5){task.classList.add('hidden');menu.classList.remove('hidden');document.querySelector('#menu h2').textContent='🎉 Semua Misi Selesai!';document.querySelector('#menu p').textContent='Kamu telah belajar lima kata ajaib. Terus gunakan kata-kata sopan setiap hari!';renderMissions()}else{const next=missions.findIndex((m,i)=>!completed.has(i));if(next>=0)startMission(next);else showMenu()}};
+document.getElementById('backBtn').onclick=showMenu;document.getElementById('homeBtn').onclick=showMenu;
+function move(d){if(mode!=='map')return;const v=13;if(d==='up')player.y-=v;if(d==='down')player.y+=v;if(d==='left')player.x-=v;if(d==='right')player.x+=v;player.x=Math.max(15,Math.min(785,player.x));player.y=Math.max(30,Math.min(400,player.y));draw()}
+document.querySelectorAll('[data-move]').forEach(b=>{b.addEventListener('click',()=>move(b.dataset.move));});
+document.getElementById('meetBtn').onclick=()=>{let best=0,dist=1e9;missions.forEach((m,i)=>{const d=Math.hypot(player.x-m.x,player.y-m.y);if(d<dist){dist=d;best=i}});startMission(best)};
+window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();const map={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'};if(map[k]){e.preventDefault();move(map[k])}});
+c.addEventListener('click',e=>{if(mode!=='map')return;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)*800/r.width,y=(e.clientY-r.top)*420/r.height;let best=0,dist=1e9;missions.forEach((m,i)=>{const d=Math.hypot(x-m.x,y-m.y);if(d<dist){dist=d;best=i}});if(dist<55)startMission(best)});
+function startMap(){mode='map';menu.classList.add('hidden');task.classList.add('hidden');controls.classList.remove('hidden');draw()}
+showMenu();document.querySelector('#menu h2').insertAdjacentHTML('afterend','<button id="exploreBtn" class="secondary small" style="margin:0 0 10px">Jelajahi Peta Desa</button>');document.getElementById('exploreBtn').onclick=startMap;
+</script>
+</body>
+</html>
